@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TaylorR\TelegramLog\user;
+namespace TaylorR\TelegramAPI\user;
 
 class User
 {
