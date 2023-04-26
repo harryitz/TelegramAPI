@@ -7,7 +7,7 @@ namespace TaylorR\TelegramAPI\events;
 use pocketmine\event\Event;
 use TaylorR\TelegramLog\user\User;
 
-class SendTextEvent extends Event
+class EditedText extends Event
 {
 
     public function __construct(

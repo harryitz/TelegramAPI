@@ -6,7 +6,10 @@ namespace TaylorR\TelegramAPI;
 
 use pocketmine\plugin\Plugin;
 use TaylorR\TelegramAPI\client\Client;
+use TaylorR\TelegramAPI\events\EditedText;
+use TaylorR\TelegramAPI\events\ReplyMessageEvent;
 use TaylorR\TelegramAPI\events\SendTextEvent;
+use TaylorR\TelegramLog\user\User;
 
 class TelegramBot extends Client
 {
@@ -43,8 +46,14 @@ class TelegramBot extends Client
 
         if ($message){
             $text = $message['text'] ?? null;
+            $user = new User(
+                $message['from']['username'],
+                $message['from']['first_name'],
+                $message['from']['is_bot'],
+                $message['from']['id']
+            );
             if ($text){
-                $ev = new SendTextEvent($text);
+                $ev = new SendTextEvent($user, $text);
                 $ev->call();
                 foreach ($this->textRegexCallback as $regex => $callback){
                     if (preg_match($regex, $text, $matches)){
@@ -56,6 +65,19 @@ class TelegramBot extends Client
             if ($replyToMessage){
                 $chatId = $replyToMessage['chat']['id'];
                 $messageId = $replyToMessage['message_id'];
+                $Replyuser = new User(
+                    $replyToMessage['from']['username'],
+                    $replyToMessage['from']['first_name'],
+                    $replyToMessage['from']['is_bot'],
+                    $replyToMessage['from']['id']
+                );
+                $ev = new ReplyMessageEvent(
+                    $user,
+                    $Replyuser,
+                    $replyToMessage['text'],
+                    $message['text'],
+                );
+                $ev->call();
                 $callback = $this->replyListeners[$chatId . $messageId] ?? null;
                 if ($callback){
                     $callback($message);
@@ -64,6 +86,8 @@ class TelegramBot extends Client
         }
 
         if ($editedMessage){
+            $ev = new EditedText($user, $text);
+            $ev->call();
             foreach ($this->editedListeners as $callback){
                 $callback($editedMessage);
             }

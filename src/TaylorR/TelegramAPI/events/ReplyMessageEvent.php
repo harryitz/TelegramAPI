@@ -7,11 +7,13 @@ namespace TaylorR\TelegramAPI\events;
 use pocketmine\event\Event;
 use TaylorR\TelegramLog\user\User;
 
-class SendTextEvent extends Event
+class ReplyMessageEvent extends Event
 {
 
     public function __construct(
         private User $user,
+        private User $replyuser,
+        private string $replyText,
         private string $text
     ){}
 
@@ -21,6 +23,22 @@ class SendTextEvent extends Event
     public function getUser(): User
     {
         return $this->user;
+    }
+
+    /**
+     * @return User
+     */
+    public function getReplyUser(): User
+    {
+        return $this->replyuser;
+    }
+
+    /**
+     * @return string
+     */
+    public function getReplyText(): string
+    {
+        return $this->replyText;
     }
 
     /**
