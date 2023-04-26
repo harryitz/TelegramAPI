@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace TaylorR\TelegramAPI\client;
 
+use pocketmine\scheduler\Task;
+use pocketmine\scheduler\TaskScheduler;
+use pocketmine\Server;
 use pocketmine\utils\Internet;
 
 abstract class Client
@@ -11,12 +14,44 @@ abstract class Client
 
     protected array $options = [];
 
+    private TaskScheduler $scheduler;
+
+    public int $lastUpdateId;
+
     public function __construct(
         protected string $token,
         array $options = []
     ){
         $this->options['baseApiUrl'] = $options['baseApiUrl'] ?? 'https://api.telegram.org/bot';
         $this->options['badRejection'] = $options['badRejection'] ?? false;
+        $this->scheduler = new TaskScheduler('TelegramAPI');
+
+        $this->scheduler->scheduleRepeatingTask(new class($this, $this->getApiUrl()) extends Task {
+            
+            protected function __construct(
+                private Client $client,
+                private string $url
+            ){}
+
+            public function onRun(): void
+            {
+                $url = $this->url . 'getUpdates';
+                $result = Internet::postURL($url, json_encode([
+                    'offset' => $this->client->lastUpdateId + 1,
+                    'timeout' => 10
+                ]), 10, [
+                    'Content-Type: application/json'
+                ]);
+                $response = json_decode($result->getBody(), true);
+                if ($response['ok'] === false) {
+                    throw new \Exception($response['description']);
+                }
+                foreach ($response['result'] as $update) {
+                    $this->client->processUpdate($update['message']);
+                    $this->client->lastUpdateId = $update['update_id'];
+                }
+            }
+        }, 20);
     }
     
     abstract public function processUpdate(array $update): void;
@@ -24,7 +59,7 @@ abstract class Client
     /**
      * @return string
      */
-    private function getApiUrl(): string
+    protected function getApiUrl(): string
     {
         return $this->options['baseApiUrl'] . $this->token . '/';
     }
