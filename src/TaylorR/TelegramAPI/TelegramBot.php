@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace TaylorR\TelegramAPI;
 
+use pocketmine\Server;
 use TaylorR\TelegramAPI\client\Client;
 
 class TelegramBot extends Client
@@ -29,8 +32,20 @@ class TelegramBot extends Client
 
     public function processUpdate(array $update): void
     {
-        // Process an update; emitting the proper events and executing regexp
-        // callbacks. This method is useful should you be using a different
-        // way to fetch updates, other than those provided by TelegramBot.
+        $message = $update['message'] ?? null;
+        $editedMessage = $update['edited_message'] ?? null;
+        $channelPost = $update['channel_post'] ?? null;
+
+        if ($message){
+            // TODO: Implement onText() method.
+        }
+
+        if ($editedMessage){
+            // TODO: Implement onEditedText() method.
+        }
+
+        if ($channelPost){
+            // TODO: Implement onChannelPost() method.
+        }
     }
 }
