@@ -26,6 +26,8 @@ abstract class Client
     ){
         $this->options['baseApiUrl'] = $options['baseApiUrl'] ?? 'https://api.telegram.org/bot';
         $this->options['badRejection'] = $options['badRejection'] ?? false;
+        $this->options['debug'] = $options['debug'] ?? false;
+        $this->options['timeUpdate'] = $options['timeUpdate'] ?? 20;
         $this->scheduler = $this->plugin->getScheduler();
 
         $this->scheduler->scheduleRepeatingTask(new class($this, $this->getApiUrl()) extends Task {
@@ -53,7 +55,7 @@ abstract class Client
                     $this->client->lastUpdateId = $update['update_id'];
                 }
             }
-        }, 20);
+        }, $this->options['timeUpdate']);
     }
     
     abstract public function processUpdate(array $update): void;

@@ -33,6 +33,10 @@ class TelegramBot extends Client
 
     public function processUpdate(array $update): void
     {
+        if ($this->options['debug']) {
+            $this->plugin->getLogger()->debug('Update: ' . json_encode($update));
+        }
+        
         $message = $update['message'] ?? null;
         $editedMessage = $update['edited_message'] ?? null;
         $channelPost = $update['channel_post'] ?? null;
