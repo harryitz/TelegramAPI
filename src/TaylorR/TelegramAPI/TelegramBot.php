@@ -6,7 +6,7 @@ namespace TaylorR\TelegramAPI;
 
 use pocketmine\plugin\Plugin;
 use TaylorR\TelegramAPI\client\Client;
-use TaylorR\TelegramAPI\events\EditedText;
+use TaylorR\TelegramAPI\events\EditedTextEvent;
 use TaylorR\TelegramAPI\events\ReplyMessageEvent;
 use TaylorR\TelegramAPI\events\SendTextEvent;
 use TaylorR\TelegramAPI\user\User;
@@ -44,19 +44,17 @@ class TelegramBot extends Client
         $message = $update['message'] ?? null;
         $editedMessage = $update['edited_message'] ?? null;
 
-        if ($message){
+        if ($message) {
             $text = $message['text'] ?? null;
-            $user = new User(
-                $message['from']['username'],
-                $message['from']['first_name'],
-                $message['from']['is_bot'],
-                $message['from']['id']
-            );
-            if ($text){
+            $from = $message['from'] ?? null;
+        
+            if ($text) {
+                $user = new User($from['username'], $from['first_name'], $from['is_bot'], $from['id']);
                 $ev = new SendTextEvent($user, $text);
                 $ev->call();
-                foreach ($this->textRegexCallback as $regex => $callback){
-                    if (preg_match($regex, $text, $matches)){
+        
+                foreach ($this->textRegexCallback as $regex => $callback) {
+                    if (preg_match($regex, $text, $matches)) {
                         $callback($matches, $message);
                     }
                 }
@@ -65,37 +63,31 @@ class TelegramBot extends Client
             if ($replyToMessage){
                 $chatId = $replyToMessage['chat']['id'];
                 $messageId = $replyToMessage['message_id'];
-                $Replyuser = new User(
-                    $replyToMessage['from']['username'],
-                    $replyToMessage['from']['first_name'],
-                    $replyToMessage['from']['is_bot'],
-                    $replyToMessage['from']['id']
-                );
-                $ev = new ReplyMessageEvent(
-                    $user,
-                    $Replyuser,
-                    $replyToMessage['text'],
-                    $message['text'],
-                );
-                $ev->call();
+                $replyFrom = $replyToMessage['from'] ?? null;
+                if ($replyFrom) {
+                    $replyUser = new User($replyFrom['username'], $replyFrom['first_name'], $replyFrom['is_bot'], $replyFrom['id']);
+                    $ev = new ReplyMessageEvent($user, $replyUser, $replyToMessage['text'], $message['text']);
+                    $ev->call();
+                }
+
                 $callback = $this->replyListeners[$chatId . $messageId] ?? null;
-                if ($callback){
+                if ($callback) {
                     $callback($message);
                 }
             }
         }
 
         if ($editedMessage){
-            $user = new User(
-                $editedMessage['from']['username'],
-                $editedMessage['from']['first_name'],
-                $editedMessage['from']['is_bot'],
-                $editedMessage['from']['id']
-            );
-            $ev = new EditedText($user, $editedMessage['text']);
-            $ev->call();
-            foreach ($this->editedListeners as $callback){
-                $callback($editedMessage);
+            $from = $editedMessage['from'] ?? null;
+            $text = $editedMessage['text'] ?? null;
+            if ($from && $text) {
+                $user = new User($from['username'], $from['first_name'], $from['is_bot'], $from['id']);
+                $ev = new EditedTextEvent($user, $text);
+                $ev->call();
+        
+                foreach ($this->editedListeners as $callback) {
+                    $callback($editedMessage);
+                }
             }
         }
     }
