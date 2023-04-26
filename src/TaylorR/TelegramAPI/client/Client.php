@@ -9,6 +9,7 @@ use pocketmine\scheduler\Task;
 use pocketmine\scheduler\TaskScheduler;
 use pocketmine\Server;
 use pocketmine\utils\Internet;
+use TaylorR\TelegramAPI\handlers\getUpdates;
 
 abstract class Client
 {
@@ -30,32 +31,10 @@ abstract class Client
         $this->options['timeUpdate'] = $options['timeUpdate'] ?? 20;
         $this->scheduler = $this->plugin->getScheduler();
 
-        $this->scheduler->scheduleRepeatingTask(new class($this, $this->getApiUrl()) extends Task {
-            
-            protected function __construct(
-                private Client $client,
-                private string $url
-            ){}
-
-            public function onRun(): void
-            {
-                $url = $this->url . 'getUpdates';
-                $result = Internet::postURL($url, json_encode([
-                    'offset' => $this->client->lastUpdateId + 1,
-                    'timeout' => 10
-                ]), 10, [
-                    'Content-Type: application/json'
-                ]);
-                $response = json_decode($result->getBody(), true);
-                if ($response['ok'] === false) {
-                    throw new \Exception($response['description']);
-                }
-                foreach ($response['result'] as $update) {
-                    $this->client->processUpdate($update);
-                    $this->client->lastUpdateId = $update['update_id'];
-                }
-            }
-        }, $this->options['timeUpdate']);
+        $this->scheduler->scheduleRepeatingTask(new getUpdates(
+            $this,
+            $this->getApiUrl()
+        ), $this->options['timeUpdate']);
     }
     
     abstract public function processUpdate(array $update): void;
