@@ -49,7 +49,7 @@ abstract class Client
                     throw new \Exception($response['description']);
                 }
                 foreach ($response['result'] as $update) {
-                    $this->client->processUpdate($update['message']);
+                    $this->client->processUpdate($update);
                     $this->client->lastUpdateId = $update['update_id'];
                 }
             }
