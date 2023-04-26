@@ -26,7 +26,7 @@ class TelegramBot extends Client
     private function checkToken(): void
     {
         $response = $this->request('getMe');
-        if ($response['ok'] === false) {
+        if ($response === false) {
             throw new \Exception($response['description']);
         }
     }

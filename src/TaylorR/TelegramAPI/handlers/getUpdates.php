@@ -11,7 +11,7 @@ use TaylorR\TelegramAPI\client\Client;
 class getUpdates extends Task
 {
 
-    protected function __construct(
+    public function __construct(
         private Client $client,
         private string $url
     ){}
@@ -26,6 +26,7 @@ class getUpdates extends Task
         ]), 10, [
             'Content-Type: application/json'
         ]);
+        if (!$result) return;
         $response = json_decode($result->getBody(), true);
         if ($response['ok'] === false) {
             throw new \Exception($response['description']);

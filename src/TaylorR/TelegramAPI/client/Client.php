@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace TaylorR\TelegramAPI\client;
 
-use pocketmine\plugin\PluginBase;
+use pocketmine\plugin\Plugin;
 use pocketmine\scheduler\TaskScheduler;
 use pocketmine\utils\Internet;
 use TaylorR\TelegramAPI\handlers\getUpdates;
@@ -16,19 +16,19 @@ abstract class Client
 
     private TaskScheduler $scheduler;
 
-    public int $lastUpdateId;
+    public int $lastUpdateId = 0;
 
     public array $textRegexCallback, $replyListeners, $editedListeners;
 
     public function __construct(
         protected string $token,
-        protected PluginBase $plugin,
+        protected Plugin $plugin,
         array $options = []
     ){
         $this->options['baseApiUrl'] = $options['baseApiUrl'] ?? 'https://api.telegram.org/bot';
         $this->options['badRejection'] = $options['badRejection'] ?? false;
         $this->options['debug'] = $options['debug'] ?? false;
-        $this->options['timeUpdate'] = $options['timeUpdate'] ?? 20;
+        $this->options['timeUpdate'] = $options['timeUpdate'] ?? 100;
         $this->textRegexCallback = [];
         $this->replyListeners = [];
         $this->editedListeners = [];
