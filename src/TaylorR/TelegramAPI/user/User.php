@@ -24,7 +24,7 @@ class User
         return $this->first_name;
     }
 
-    public function getIsBot(): string
+    public function isBot(): string
     {
         return $this->is_bot;
     }
