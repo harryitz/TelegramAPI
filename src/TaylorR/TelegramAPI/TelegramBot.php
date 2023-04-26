@@ -9,7 +9,7 @@ use TaylorR\TelegramAPI\client\Client;
 use TaylorR\TelegramAPI\events\EditedText;
 use TaylorR\TelegramAPI\events\ReplyMessageEvent;
 use TaylorR\TelegramAPI\events\SendTextEvent;
-use TaylorR\TelegramLog\user\User;
+use TaylorR\TelegramAPI\user\User;
 
 class TelegramBot extends Client
 {

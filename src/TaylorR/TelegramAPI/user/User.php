@@ -10,7 +10,7 @@ class User
     public function __construct(
         private string $username,
         private string $first_name,
-        private string $is_bot,
+        private bool $is_bot,
         private int $id
     ){}
 
@@ -24,7 +24,7 @@ class User
         return $this->first_name;
     }
 
-    public function isBot(): string
+    public function isBot(): bool
     {
         return $this->is_bot;
     }

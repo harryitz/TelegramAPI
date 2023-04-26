@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace TaylorR\TelegramAPI\events;
 
 use pocketmine\event\Event;
-use TaylorR\TelegramLog\user\User;
+use TaylorR\TelegramAPI\user\User;
 
 class EditedText extends Event
 {
