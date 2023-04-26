@@ -41,6 +41,7 @@ class TelegramBot extends Client
         $editedMessage = $update['edited_message'] ?? null;
         $channelPost = $update['channel_post'] ?? null;
 
+
         if ($message){
             $text = $message['text'] ?? null;
             if ($text){
@@ -48,6 +49,15 @@ class TelegramBot extends Client
                     if (preg_match($regex, $text, $matches)){
                         $callback($matches, $message);
                     }
+                }
+            }
+            $replyToMessage = $message['reply_to_message'] ?? null;
+            if ($replyToMessage){
+                $chatId = $replyToMessage['chat']['id'];
+                $messageId = $replyToMessage['message_id'];
+                $callback = $this->replyListeners[$chatId . $messageId] ?? null;
+                if ($callback){
+                    $callback($message);
                 }
             }
         }
@@ -70,5 +80,15 @@ class TelegramBot extends Client
     public function onText(string $regex, callable $callback): void
     {
         $this->textRegexCallback[$regex] = $callback;
+    }
+
+    /**
+     * @param int $chatId
+     * @param int $messageId
+     * @param callable $callback
+     */
+    public function onReplyToMessage(int $chatId, int $messageId, callable $callback): void
+    {
+        $this->replyListeners[$chatId . $messageId] = $callback;
     }
 }

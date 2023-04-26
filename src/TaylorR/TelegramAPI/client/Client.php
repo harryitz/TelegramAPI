@@ -18,7 +18,7 @@ abstract class Client
 
     public int $lastUpdateId;
 
-    public array $textRegexCallback;
+    public array $textRegexCallback, $replyListeners;
 
     public function __construct(
         protected string $token,
@@ -30,6 +30,7 @@ abstract class Client
         $this->options['debug'] = $options['debug'] ?? false;
         $this->options['timeUpdate'] = $options['timeUpdate'] ?? 20;
         $this->textRegexCallback = [];
+        $this->replyListeners = [];
         $this->scheduler = $this->plugin->getScheduler();
 
         $this->scheduler->scheduleRepeatingTask(new getUpdates(
