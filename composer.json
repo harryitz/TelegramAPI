@@ -1,0 +1,17 @@
+{
+    "name": "taylorr/telegram-api",
+    "description": "a library to make it easier for users to interact with Telegram bot for PMMP",
+    "type": "library",
+    "license": "GPL-2.0",
+    "autoload": {
+        "psr-4": {
+            "Taylorr\\TelegramApi\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Taylor.R"
+        }
+    ],
+    "require": {}
+}
