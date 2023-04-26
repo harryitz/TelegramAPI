@@ -86,7 +86,13 @@ class TelegramBot extends Client
         }
 
         if ($editedMessage){
-            $ev = new EditedText($user, $text);
+            $user = new User(
+                $editedMessage['from']['username'],
+                $editedMessage['from']['first_name'],
+                $editedMessage['from']['is_bot'],
+                $editedMessage['from']['id']
+            );
+            $ev = new EditedText($user, $editedMessage['text']);
             $ev->call();
             foreach ($this->editedListeners as $callback){
                 $callback($editedMessage);
