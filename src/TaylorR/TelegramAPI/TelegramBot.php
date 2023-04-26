@@ -39,7 +39,6 @@ class TelegramBot extends Client
 
         $message = $update['message'] ?? null;
         $editedMessage = $update['edited_message'] ?? null;
-        $channelPost = $update['channel_post'] ?? null;
 
 
         if ($message){
@@ -63,11 +62,9 @@ class TelegramBot extends Client
         }
 
         if ($editedMessage){
-            // TODO: Implement onEditedText() method.
-        }
-
-        if ($channelPost){
-            // TODO: Implement onChannelPost() method.
+            foreach ($this->editedListeners as $callback){
+                $callback($editedMessage);
+            }
         }
     }
 
@@ -90,5 +87,13 @@ class TelegramBot extends Client
     public function onReplyToMessage(int $chatId, int $messageId, callable $callback): void
     {
         $this->replyListeners[$chatId . $messageId] = $callback;
+    }
+
+    /**
+     * @param callable $callback
+     */
+    public function onEditedText(callable $callback): void
+    {
+        $this->editedListeners[] = $callback;
     }
 }
