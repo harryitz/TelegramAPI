@@ -1,0 +1,10 @@
+--- # Poggit-CI Manifest. Open the CI at https://poggit.pmmp.io/ci/TaylorR47/TelegramAPI
+build-by-default: true
+branches:
+- master
+projects:
+  TelegramAPI:
+    path: ""
+    model: virion
+    type: library
+...
