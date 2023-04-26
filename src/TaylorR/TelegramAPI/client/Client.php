@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace TaylorR\TelegramAPI\client;
 
 use pocketmine\plugin\PluginBase;
-use pocketmine\scheduler\Task;
 use pocketmine\scheduler\TaskScheduler;
-use pocketmine\Server;
 use pocketmine\utils\Internet;
 use TaylorR\TelegramAPI\handlers\getUpdates;
 
@@ -20,6 +18,8 @@ abstract class Client
 
     public int $lastUpdateId;
 
+    public array $textRegexCallback;
+
     public function __construct(
         protected string $token,
         protected PluginBase $plugin,
@@ -29,6 +29,7 @@ abstract class Client
         $this->options['badRejection'] = $options['badRejection'] ?? false;
         $this->options['debug'] = $options['debug'] ?? false;
         $this->options['timeUpdate'] = $options['timeUpdate'] ?? 20;
+        $this->textRegexCallback = [];
         $this->scheduler = $this->plugin->getScheduler();
 
         $this->scheduler->scheduleRepeatingTask(new getUpdates(

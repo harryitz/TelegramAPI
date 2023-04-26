@@ -19,8 +19,9 @@ class getUpdates extends Task
     public function onRun(): void
     {
         $url = $this->url . 'getUpdates';
+        $offset = $this->client->lastUpdateId + 1;
         $result = Internet::postURL($url, json_encode([
-            'offset' => $this->client->lastUpdateId + 1,
+            'offset' => $offset,
             'timeout' => 10
         ]), 10, [
             'Content-Type: application/json'

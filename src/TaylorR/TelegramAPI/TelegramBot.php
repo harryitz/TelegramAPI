@@ -36,13 +36,20 @@ class TelegramBot extends Client
         if ($this->options['debug']) {
             $this->plugin->getLogger()->debug('Update: ' . json_encode($update));
         }
-        
+
         $message = $update['message'] ?? null;
         $editedMessage = $update['edited_message'] ?? null;
         $channelPost = $update['channel_post'] ?? null;
 
         if ($message){
-            // TODO: Implement onText() method.
+            $text = $message['text'] ?? null;
+            if ($text){
+                foreach ($this->textRegexCallback as $regex => $callback){
+                    if (preg_match($regex, $text, $matches)){
+                        $callback($matches, $message);
+                    }
+                }
+            }
         }
 
         if ($editedMessage){
@@ -52,5 +59,16 @@ class TelegramBot extends Client
         if ($channelPost){
             // TODO: Implement onChannelPost() method.
         }
+    }
+
+    /**
+     * @param string $method
+     * @param array $params
+     * @return array
+     * @throws \Exception
+     */
+    public function onText(string $regex, callable $callback): void
+    {
+        $this->textRegexCallback[$regex] = $callback;
     }
 }
