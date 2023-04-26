@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace TaylorR\TelegramAPI;
 
-use pocketmine\Server;
+use pocketmine\plugin\Plugin;
 use TaylorR\TelegramAPI\client\Client;
 
 class TelegramBot extends Client
@@ -12,9 +12,10 @@ class TelegramBot extends Client
 
     public function __construct(
         protected string $token,
+        protected Plugin $plugin,
         array $options = []
     ){
-        parent::__construct($token, $options);
+        parent::__construct($token, $plugin, $options);
         $this->checkToken();
     }
 

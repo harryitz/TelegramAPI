@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace TaylorR\TelegramAPI\client;
 
+use pocketmine\plugin\PluginBase;
 use pocketmine\scheduler\Task;
 use pocketmine\scheduler\TaskScheduler;
 use pocketmine\Server;
@@ -20,11 +21,12 @@ abstract class Client
 
     public function __construct(
         protected string $token,
+        protected PluginBase $plugin,
         array $options = []
     ){
         $this->options['baseApiUrl'] = $options['baseApiUrl'] ?? 'https://api.telegram.org/bot';
         $this->options['badRejection'] = $options['badRejection'] ?? false;
-        $this->scheduler = new TaskScheduler('TelegramAPI');
+        $this->scheduler = $this->plugin->getScheduler();
 
         $this->scheduler->scheduleRepeatingTask(new class($this, $this->getApiUrl()) extends Task {
             
