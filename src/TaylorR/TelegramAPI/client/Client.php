@@ -26,7 +26,7 @@ abstract class Client
         array $options = []
     ){
         $this->options['baseApiUrl'] = $options['baseApiUrl'] ?? 'https://api.telegram.org/bot';
-        $this->options['processUpdate'] = $options['timeUpdate'] ?? false;
+        $this->options['processUpdate'] = $options['processUpdate'] ?? false;
         $this->options['badRejection'] = $options['badRejection'] ?? false;
         $this->options['debug'] = $options['debug'] ?? false;
         $this->options['timeUpdate'] = $options['timeUpdate'] ?? 100;
