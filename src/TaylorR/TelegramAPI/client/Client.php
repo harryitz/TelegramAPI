@@ -34,11 +34,13 @@ abstract class Client
         $this->replyListeners = [];
         $this->editedListeners = [];
         $this->scheduler = $this->plugin->getScheduler();
-
-        $this->scheduler->scheduleRepeatingTask(new getUpdates(
-            $this,
-            $this->getApiUrl()
-        ), $this->options['timeUpdate']);
+        
+        if ($this->options['processUpdate']) {
+            $this->scheduler->scheduleRepeatingTask(new getUpdates(
+                $this,
+                $this->getApiUrl()
+            ), $this->options['timeUpdate']);
+        }
     }
     
     abstract public function processUpdate(array $update): void;
