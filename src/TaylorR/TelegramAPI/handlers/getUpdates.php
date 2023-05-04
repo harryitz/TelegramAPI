@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace TaylorR\TelegramAPI\handlers;
 
+use pocketmine\promise\Promise;
 use pocketmine\scheduler\Task;
 use pocketmine\utils\Internet;
 use TaylorR\TelegramAPI\client\Client;
@@ -34,5 +35,6 @@ class getUpdates extends Task
             $this->client->processUpdate($update);
             $this->client->lastUpdateId = $update['update_id'];
         }
+        
     }
 }

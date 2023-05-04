@@ -29,7 +29,7 @@ abstract class Client
         $this->options['processUpdate'] = $options['processUpdate'] ?? false;
         $this->options['badRejection'] = $options['badRejection'] ?? false;
         $this->options['debug'] = $options['debug'] ?? false;
-        $this->options['timeUpdate'] = $options['timeUpdate'] ?? 100;
+        $this->options['timeout'] = intval($options['timeout'])*20 ?? 20;
         $this->textRegexCallback = [];
         $this->replyListeners = [];
         $this->editedListeners = [];
@@ -39,7 +39,7 @@ abstract class Client
             $this->scheduler->scheduleRepeatingTask(new getUpdates(
                 $this,
                 $this->getApiUrl()
-            ), $this->options['timeUpdate']);
+            ), $this->options['timeout']);
         }
     }
     
@@ -66,6 +66,8 @@ abstract class Client
             'Content-Type: application/json'
         ]);
         $response = json_decode($result->getBody(), true);
+        $status = $result->getCode();
+        $response['result']['status'] = $status;
         if ($response['ok'] === false && $this->options['badRejection'] === true) {
             throw new \Exception($response['description']);
         }
